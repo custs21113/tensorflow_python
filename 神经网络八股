@@ -1,0 +1,78 @@
+前向传播就是搭建网络，设计网络架构。（forward.py)
+def forward(x,regularizer):
+    w=tf.get_weight()
+    b=tf.get_bais()
+    y=tf.matmul(w,b)
+
+def get_weoght(shape,regularizer):
+    w=tf.Variable()#给w赋初值
+    tf.add_to_collection("losses",tf.contrib.layers.l2_regularizer(regularizer)(w))
+    #把每个w的正则化损失加到总损失losses中。
+    return w
+
+def get_bias(shape):#shape就是b的形状，就是某层中b的个数。
+    b=tf.Variable()
+    return b
+
+
+反向传播就是训练网络，优化网络参数（backward.py)
+def backward():
+    x=tf.placeholder()
+    y_=tf.placeholer()
+    y=forward.forward(x,REGULARZIER)
+    global_step=tf.Variable(0,trainable=False)
+    loss=
+
+    #正则化
+
+    #loss可以是：
+    #1、y与y_的差距(均方误差）
+    loss_mse=tf.reduce_mean(tf.square(y-y_))
+    #也可以是
+    #2、交叉熵
+    ce=tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y,lables=tf.argmax(y_,1
+    #y与y_的差距
+    cem=tf.reduce_mean(ce)
+
+    #加入正则化来提高泛化性
+    loss=y与y_的差距(均方误差或交叉熵)+tf.add_n(tf.get_collection("losses")
+
+    #指数衰减学习率加快优化效率
+    #动态计算学习率
+    learning_rate=tf.exponential_decay(
+        LEARNING_RATE_BASE,
+        global_step,
+        样本集总样本书/BATCH_SIZE,
+        LEARNING_RATE_DECAY,
+        staircase=True)
+
+
+    #滑动平均
+    #
+    #训练过程
+    train_step=tf.train.GradientDescentOptimizer(learning_rate).minimize(loss,global_step=global_step)
+
+    #滑动平均
+    ema=tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY,global_step=global_step)
+    ema_op=ema.apply(tf.trainable_variable())
+    with tf.control_dependencies([train_step,ema_op])
+        train_op=tf.no_op(name="train")
+
+     ##########
+     with tf.Session() as sess:#使用with结构初始化所有参数
+        init_op=tf.global_variables_initializer()
+        sess.run(init_op)
+        STEPS=     #训练次数
+        for i in range(STEPS):#迭代STEPS轮
+            sess.run(train_step,feed_dict={x:X[start:end],y_:Y_[start:end]}#执行训练过程
+            if i % BATCHSIZE ==0:
+                print("Something")
+
+     if __name__=="__main__":#判断Python运行的零件是否是主零件
+        backward()
+
+
+
+
+
+
